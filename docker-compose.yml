@@ -12,7 +12,9 @@ services:
       - PORT=3000
       - DATABASE_PATH=/app/data/data.db
       - JWT_SECRET=${JWT_SECRET}
-      - CORS_ORIGIN=${FRONTEND_URL:-http://localhost:3001}
+      - CORS_ORIGIN=http://localhost:${FRONTEND_PORT:-3001}
+    ports:
+      - "${BACKEND_PORT:-3000}:3000"
     volumes:
       - backend_data:/app/data
     networks:
@@ -33,14 +35,13 @@ services:
     container_name: library-frontend
     restart: unless-stopped
     environment:
-      - BACKEND_URL=http://backend:3000
-      - FRONTEND_HOST=${FRONTEND_HOST:-localhost}
+      - VITE_API_URL=http://localhost:${BACKEND_PORT:-3000}
     ports:
       - "${FRONTEND_PORT:-3001}:80"
     networks:
       - library-network
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/health"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -68,29 +69,6 @@ services:
     networks:
       - library-network
 
-  nginx:
-    image: nginx:alpine
-    container_name: library-nginx
-    restart: unless-stopped
-    ports:
-      - "${HTTP_PORT:-80}:80"
-      - "${HTTPS_PORT:-443}:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./nginx/ssl:/etc/nginx/ssl:ro
-      - nginx_logs:/var/log/nginx
-    environment:
-      - FRONTEND_URL=http://frontend:80
-      - BACKEND_URL=http://backend:3000
-    networks:
-      - library-network
-    depends_on:
-      frontend:
-        condition: service_healthy
-      backend:
-        condition: service_healthy
-
 volumes:
   backend_data:
     driver: local
@@ -98,8 +76,6 @@ volumes:
       type: none
       o: bind
       device: ${DATA_PATH:-./data}
-  nginx_logs:
-    driver: local
 
 networks:
   library-network:
