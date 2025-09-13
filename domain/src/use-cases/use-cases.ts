@@ -6,7 +6,6 @@ export interface UseCaseDeclaration {
 }
 
 export const domainUseCases = {
-  // Authentication use cases
   loginUser: {
     useCase: loginUser,
     enable: true,

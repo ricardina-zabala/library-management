@@ -8,7 +8,6 @@ function createDb() {
   const db = sqlite("data/data.db");
   db.pragma("journal_mode = WAL");
 
-  // Tables for library management system
   db.prepare(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
@@ -72,7 +71,6 @@ app.use(
 app.use(express.json());
 
 const dependencies = {
-  // Services will be added as they are implemented
 };
 
 for (const key in domainUseCases) {
