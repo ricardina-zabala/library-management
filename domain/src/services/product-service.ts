@@ -1,6 +1,1 @@
-import type { Product } from "../entities/product.js";
-
-export interface ProductService {
-  findById: (id: string) => Promise<Product | undefined>;
-  findAll: () => Promise<Product[]>;
-}
+// This file has been removed - replaced with library domain services
