@@ -1,4 +1,4 @@
-import { getProduct, getProductsList } from "./example-usecase/index.js";
+import { loginUser, registerUser, validateToken } from "./auth/index.js";
 
 export interface UseCaseDeclaration {
   useCase: (deps: any, payload: any) => Promise<unknown>;
@@ -6,12 +6,17 @@ export interface UseCaseDeclaration {
 }
 
 export const domainUseCases = {
-  getProduct: {
-    useCase: getProduct,
-    enable: false,
+  // Authentication use cases
+  loginUser: {
+    useCase: loginUser,
+    enable: true,
   },
-  getProductsList: {
-    useCase: getProductsList,
+  registerUser: {
+    useCase: registerUser,
+    enable: true,
+  },
+  validateToken: {
+    useCase: validateToken,
     enable: true,
   },
 } as const satisfies Record<string, UseCaseDeclaration>;
