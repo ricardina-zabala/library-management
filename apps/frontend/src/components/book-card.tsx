@@ -45,7 +45,6 @@ export const BookCard = ({ book, onBorrow, onReturn, onDetails }: BookCardProps)
 
   return (
     <div className={`bg-white border border-gray-200 rounded-lg p-4 m-2 shadow-md hover:shadow-lg transition-shadow duration-200 max-w-sm min-w-[280px] ${statusStyles.border} border-l-4`}>
-      {/* Header */}
       <div className="flex justify-between items-start mb-3 gap-3">
         <h3 className="text-lg font-semibold text-gray-800 line-clamp-2 flex-1" title={book.title}>
           {book.title}
@@ -55,7 +54,6 @@ export const BookCard = ({ book, onBorrow, onReturn, onDetails }: BookCardProps)
         </span>
       </div>
       
-      {/* Content */}
       <div className="mb-4 space-y-2">
         <p className="text-gray-600 italic text-sm">by {book.author}</p>
         <p className="text-gray-500 text-xs">ISBN: {book.isbn}</p>
@@ -69,7 +67,6 @@ export const BookCard = ({ book, onBorrow, onReturn, onDetails }: BookCardProps)
         </div>
       </div>
 
-      {/* Actions */}
       <div className="flex gap-2 justify-end">
         {onDetails && (
           <button 

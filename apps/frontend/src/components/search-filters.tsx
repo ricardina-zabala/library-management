@@ -50,7 +50,6 @@ export const SearchFilters = ({
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-        {/* Search Input */}
         <div className="md:col-span-2">
           <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">
             Search
@@ -65,7 +64,6 @@ export const SearchFilters = ({
           />
         </div>
 
-        {/* Status Filter */}
         <div>
           <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
             Status
@@ -84,7 +82,6 @@ export const SearchFilters = ({
           </select>
         </div>
 
-        {/* Category Filter */}
         <div>
           <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
             Category
@@ -105,7 +102,6 @@ export const SearchFilters = ({
         </div>
       </div>
 
-      {/* Clear Filters Button */}
       {(searchQuery || selectedStatus !== 'all' || selectedCategory !== 'all') && (
         <div className="mt-4 flex justify-end">
           <button
