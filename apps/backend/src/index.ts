@@ -3,9 +3,12 @@ import express from "express";
 import type { Request, Response } from "express";
 import sqlite from "better-sqlite3";
 import { domainUseCases, type UseCaseName } from "app-domain";
+import { DatabaseUserService } from "./service/user-service.js";
+import { DatabaseBookService } from "./service/book-service.js";
+import { DatabaseLoanService } from "./service/loan-service.js";
 
 function createDb() {
-  const db = sqlite("data/data.db");
+  const db = sqlite(process.env.DATABASE_PATH || "data/data.db");
   db.pragma("journal_mode = WAL");
 
   db.prepare(`
@@ -59,31 +62,48 @@ function createDb() {
 
 const db = createDb();
 
+const userService = new DatabaseUserService(db);
+const bookService = new DatabaseBookService(db);
+const loanService = new DatabaseLoanService(db);
+
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
   })
 );
 
 app.use(express.json());
 
 const dependencies = {
+  authService: userService,
+  userService: userService,
+  bookService: bookService,
+  loanService: loanService,
 };
+
+app.get('/health', (req: Request, res: Response) => {
+  res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString() });
+});
 
 for (const key in domainUseCases) {
   const useCase = domainUseCases[key as UseCaseName];
   if (!useCase) break;
 
   app.post(`/${key}`, async (req: Request, res: Response) => {
-    const payload = req.body;
-    if (!payload) {
-      return res.status(400).send("Required data missing");
+    try {
+      const payload = req.body;
+      if (!payload && req.method === 'POST') {
+        return res.status(400).json({ error: "Required data missing" });
+      }
+      const result = await useCase.useCase(dependencies, payload);
+      res.json(result);
+    } catch (error) {
+      console.error(`Error in ${key}:`, error);
+      res.status(500).json({ error: "Internal server error" });
     }
-    const result = await useCase.useCase(dependencies, payload);
-    res.json(result);
   });
 }
 
