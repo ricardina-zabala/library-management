@@ -68,7 +68,7 @@ export const LoansPage = () => {
           <p className="text-gray-600">Manage your borrowed books</p>
         </div>
 
-        {loans.length === 0 ? (
+        {Array.isArray(loans) && loans.length === 0 ? (
           <div className="bg-white rounded-lg shadow p-6 text-center">
             <p className="text-gray-500 text-lg">You haven't borrowed any books yet.</p>
             <a
@@ -78,7 +78,7 @@ export const LoansPage = () => {
               Browse Books
             </a>
           </div>
-        ) : (
+        ) : Array.isArray(loans) && loans.length > 0 ? (
           <div className="bg-white shadow overflow-hidden sm:rounded-md">
             <ul className="divide-y divide-gray-200">
               {loans.map((loan) => (
@@ -133,6 +133,16 @@ export const LoansPage = () => {
                 </li>
               ))}
             </ul>
+          </div>
+        ) : (
+          <div className="bg-white rounded-lg shadow p-6 text-center">
+            <p className="text-gray-500 text-lg">Unable to load loans data.</p>
+            <button
+              onClick={() => user && getUserLoans(user.id)}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Retry
+            </button>
           </div>
         )}
       </div>

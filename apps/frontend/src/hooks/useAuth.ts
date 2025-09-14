@@ -9,7 +9,8 @@ interface LoginPayload {
 interface RegisterPayload {
   email: string;
   password: string;
-  name: string;
+  firstName: string;
+  lastName: string;
 }
 
 interface User {

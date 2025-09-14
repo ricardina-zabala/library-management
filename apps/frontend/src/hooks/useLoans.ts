@@ -23,16 +23,24 @@ export const useLoans = () => {
     try {
       const response = await api<Loan[]>('getUserLoans', { userId });
       
+      console.log('getUserLoans response:', response); // Debug log
+      
       if (response.success && response.data) {
-        setLoans(response.data);
+        // Ensure response.data is an array
+        const loansData = Array.isArray(response.data) ? response.data : [];
+        setLoans(loansData);
       } else {
+        console.error('Get user loans failed:', response.error); // Debug log
         setError(response.error || 'Failed to get user loans');
+        setLoans([]); // Reset to empty array on error
       }
       
       return response;
     } catch (error) {
+      console.error('Get user loans error:', error); // Debug log
       const errorMessage = error instanceof Error ? error.message : 'Failed to get user loans';
       setError(errorMessage);
+      setLoans([]); // Reset to empty array on error
       return {
         success: false,
         error: errorMessage,
@@ -50,7 +58,7 @@ export const useLoans = () => {
       const response = await api<Loan>('borrowBook', payload as unknown as Record<string, unknown>);
       
       if (response.success && response.data) {
-        setLoans(prev => [...prev, response.data!]);
+        setLoans(prev => Array.isArray(prev) ? [...prev, response.data!] : [response.data!]);
       } else {
         setError(response.error || 'Failed to borrow book');
       }
@@ -76,9 +84,9 @@ export const useLoans = () => {
       const response = await api<Loan>('returnBook', payload as unknown as Record<string, unknown>);
       
       if (response.success && response.data) {
-        setLoans(prev => prev.map(loan => 
+        setLoans(prev => Array.isArray(prev) ? prev.map(loan => 
           loan.id === response.data!.id ? response.data! : loan
-        ));
+        ) : [response.data!]);
       } else {
         setError(response.error || 'Failed to return book');
       }
