@@ -59,10 +59,10 @@ export async function searchBooks(
     criteria.category = payload.category.trim();
   }
   
-  if (payload.status) {
-    criteria.status = payload.status;
-  } else if (payload.availableOnly) {
+  if (payload.availableOnly) {
     criteria.status = BookStatus.AVAILABLE;
+  } else if (payload.status) {
+    criteria.status = payload.status;
   }
   
   if (payload.limit) {

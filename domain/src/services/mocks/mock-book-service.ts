@@ -21,7 +21,16 @@ export class MockBookService implements BookService {
   }
 
   async search(criteria: BookSearchCriteria): Promise<Book[]> {
-    return this.books.filter(book => {
+    let filteredBooks = this.books.filter(book => {
+      if (criteria.query) {
+        const query = criteria.query.toLowerCase();
+        const matchesQuery = 
+          book.title.toLowerCase().includes(query) ||
+          book.author.toLowerCase().includes(query) ||
+          book.category.toLowerCase().includes(query);
+        if (!matchesQuery) return false;
+      }
+      
       if (criteria.title && !book.title.toLowerCase().includes(criteria.title.toLowerCase())) {
         return false;
       }
@@ -39,6 +48,16 @@ export class MockBookService implements BookService {
       }
       return true;
     });
+
+    if (criteria.offset) {
+      filteredBooks = filteredBooks.slice(criteria.offset);
+    }
+
+    if (criteria.limit) {
+      filteredBooks = filteredBooks.slice(0, criteria.limit);
+    }
+
+    return filteredBooks;
   }
 
   async create(bookData: CreateBookData): Promise<Book> {
