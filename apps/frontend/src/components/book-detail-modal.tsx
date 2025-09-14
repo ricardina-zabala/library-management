@@ -80,11 +80,6 @@ export const BookDetailModal = ({
               <label className="text-sm font-medium text-gray-500 uppercase tracking-wide">Copias Disponibles</label>
               <p className="mt-1 text-gray-900">{book.availableCopies}</p>
             </div>
-            
-            <div>
-              <label className="text-sm font-medium text-gray-500 uppercase tracking-wide">ID del Libro</label>
-              <p className="mt-1 text-gray-900 font-mono text-sm">{book.id}</p>
-            </div>
           </div>
         </div>
 

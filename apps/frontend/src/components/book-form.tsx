@@ -98,7 +98,8 @@ export const BookForm: React.FC<BookFormProps> = ({
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-          Título *
+          Título
+          <span className='text-red-500'> *</span>
         </label>
         <input
           type="text"
@@ -115,7 +116,8 @@ export const BookForm: React.FC<BookFormProps> = ({
 
       <div>
         <label htmlFor="author" className="block text-sm font-medium text-gray-700 mb-1">
-          Autor *
+          Autor
+          <span className='text-red-500'> *</span>
         </label>
         <input
           type="text"
@@ -132,7 +134,8 @@ export const BookForm: React.FC<BookFormProps> = ({
 
       <div>
         <label htmlFor="isbn" className="block text-sm font-medium text-gray-700 mb-1">
-          ISBN *
+          ISBN
+          <span className='text-red-500'> *</span>
         </label>
         <input
           type="text"
@@ -151,7 +154,8 @@ export const BookForm: React.FC<BookFormProps> = ({
 
       <div>
         <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
-          Categoría *
+          Categoría
+          <span className='text-red-500'> *</span>
         </label>
         <input
           type="text"
@@ -169,7 +173,8 @@ export const BookForm: React.FC<BookFormProps> = ({
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label htmlFor="publishedYear" className="block text-sm font-medium text-gray-700 mb-1">
-            Año de Publicación *
+            Año de Publicación 
+            
           </label>
           <input
             type="number"
@@ -182,12 +187,13 @@ export const BookForm: React.FC<BookFormProps> = ({
             min="1000"
             max={new Date().getFullYear()}
           />
-          {errors.publishedYear && <p className="text-red-500 text-sm mt-1">{errors.publishedYear}</p>}
+          {errors.publishedYear && <p className=" text-sm mt-1">{errors.publishedYear}</p>}
         </div>
 
         <div>
           <label htmlFor="totalCopies" className="block text-sm font-medium text-gray-700 mb-1">
-            Total de Copias *
+            Total de Copias
+            <span className='text-red-500'> *</span>
           </label>
           <input
             type="number"

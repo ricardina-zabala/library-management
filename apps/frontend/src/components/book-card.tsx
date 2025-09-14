@@ -55,10 +55,10 @@ export const BookCard = ({ book, onBorrow, onReturn, onDetails }: BookCardProps)
       </div>
       
       <div className="mb-4 space-y-2">
-        <p className="text-gray-600 italic text-sm">by {book.author}</p>
+        <p className="text-gray-600 italic text-sm">Por {book.author}</p>
         <p className="text-gray-500 text-xs">ISBN: {book.isbn}</p>
         <p className="text-gray-500 text-xs">{book.category}</p>
-        <p className="text-gray-500 text-xs">Published: {book.publishedYear}</p>
+        <p className="text-gray-500 text-xs">Publicado: {book.publishedYear}</p>
         
         <div className="pt-2 mt-3 border-t border-gray-100">
           <span className="text-sm text-gray-600 font-medium">

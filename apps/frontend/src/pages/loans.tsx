@@ -86,9 +86,6 @@ export const LoansPage = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-medium text-gray-900">
-                          ID del libro: {loan.bookId}
-                        </h3>
                         <div className="flex items-center space-x-2">
                           <span
                             className={`px-2 py-1 text-xs font-medium rounded-full ${
