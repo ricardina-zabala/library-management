@@ -7,6 +7,7 @@ import { Modal } from '../components/modal.js';
 import { BookForm, type BookFormData } from '../components/book-form.js';
 import { SearchFilters } from '../components/search-filters.js';
 import { toast } from 'react-toastify';
+import { Plus } from 'lucide-react';
 
 export const AdminBooksPage = () => {
   const { books, loading, error, searchBooks, createBook, updateBook, deleteBook } = useBooks();
@@ -199,9 +200,7 @@ export const AdminBooksPage = () => {
           onClick={() => setIsCreateModalOpen(true)}
           className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors flex items-center"
         >
-          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
+          <Plus className='w-5 h-5' />
           Agregar Libro
         </button>
       </div>
@@ -286,12 +285,12 @@ export const AdminBooksPage = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${book.status === BookStatus.AVAILABLE
-                              ? 'bg-green-100 text-green-800'
-                              : book.status === BookStatus.BORROWED
-                                ? 'bg-yellow-100 text-yellow-800'
-                                : book.status === BookStatus.RESERVED
-                                  ? 'bg-blue-100 text-blue-800'
-                                  : 'bg-red-100 text-red-800'
+                            ? 'bg-green-100 text-green-800'
+                            : book.status === BookStatus.BORROWED
+                              ? 'bg-yellow-100 text-yellow-800'
+                              : book.status === BookStatus.RESERVED
+                                ? 'bg-blue-100 text-blue-800'
+                                : 'bg-red-100 text-red-800'
                             }`}>
                             {mapBookStatus(book.status)}
                           </span>
@@ -335,12 +334,12 @@ export const AdminBooksPage = () => {
                         <p className="text-sm text-gray-600 mb-2">{book.author}</p>
                       </div>
                       <span className={`px-2 py-1 text-xs font-semibold rounded-full ml-2 ${book.status === BookStatus.AVAILABLE
-                          ? 'bg-green-100 text-green-800'
-                          : book.status === BookStatus.BORROWED
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : book.status === BookStatus.RESERVED
-                              ? 'bg-blue-100 text-blue-800'
-                              : 'bg-red-100 text-red-800'
+                        ? 'bg-green-100 text-green-800'
+                        : book.status === BookStatus.BORROWED
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : book.status === BookStatus.RESERVED
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-red-100 text-red-800'
                         }`}>
                         {mapBookStatus(book.status)}
                       </span>

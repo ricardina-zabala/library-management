@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
+import { Eye, EyeClosed } from 'lucide-react';
 
 export const AuthPage = () => {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ export const AuthPage = () => {
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const { login, register, isLoading } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -19,9 +21,9 @@ export const AuthPage = () => {
     if (isLogin) {
       const response = await login({ email, password });
       if (response.success) {
-        navigate('/books');
+        navigate('/');
       } else {
-        setError(response.error || 'Login failed');
+        setError('Error de inicio de sesión');
       }
     } else {
       const response = await register({ 
@@ -32,9 +34,9 @@ export const AuthPage = () => {
       });
       if (response.success) {
         setIsLogin(true);
-        setError('Registration successful! Please login.');
+        setError('¡Registro exitoso! Por favor, inicia sesión.');
       } else {
-        setError(response.error || 'Registration failed');
+        setError('Registro fallido');
       }
     }
   };
@@ -109,17 +111,30 @@ export const AuthPage = () => {
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Contraseña
               </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete={isLogin ? "current-password" : "new-password"}
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder="Ingresa tu contraseña"
-              />
+              <div className="relative">
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete={isLogin ? "current-password" : "new-password"}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="mt-1 block w-full px-3 py-2 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
+                  placeholder="Ingresa tu contraseña"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                >
+                  {showPassword ? (
+                    <EyeClosed className='w-5 h-5 text-primary-500'/>
+                  ) : (
+                    <Eye className='w-5 h-5 text-primary-500'/>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -151,6 +166,7 @@ export const AuthPage = () => {
                 setPassword('');
                 setName('');
                 setLastName('');
+                setShowPassword(false);
               }}
               className="text-primary-600 hover:text-primary-500 text-sm"
             >

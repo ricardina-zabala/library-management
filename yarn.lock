@@ -3192,6 +3192,7 @@ __metadata:
     "@vitejs/plugin-react": "npm:^4.3.1"
     app-domain: "npm:*"
     autoprefixer: "npm:^10.4.21"
+    lucide-react: "npm:^0.544.0"
     postcss: "npm:^8.5.6"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -3908,6 +3909,15 @@ __metadata:
   dependencies:
     yallist: "npm:^3.0.2"
   checksum: 10c0/89b2ef2ef45f543011e38737b8a8622a2f8998cddf0e5437174ef8f1f70a8b9d14a918ab3e232cb3ba343b7abddffa667f0b59075b2b80e6b4d63c3de6127482
+  languageName: node
+  linkType: hard
+
+"lucide-react@npm:^0.544.0":
+  version: 0.544.0
+  resolution: "lucide-react@npm:0.544.0"
+  peerDependencies:
+    react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/2503f8cf65e62915997073b6053423bf8091b9470cb397560b417ef2f1628ea162c49e821b787cf153afb86828482d941f051c3f2aa642a1fa58c3de227e0113
   languageName: node
   linkType: hard
 
