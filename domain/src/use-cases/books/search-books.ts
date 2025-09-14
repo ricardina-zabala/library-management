@@ -6,18 +6,24 @@ export interface SearchBooksDeps {
 }
 
 export interface SearchBooksPayload {
+  query?: string;
   title?: string;
   author?: string;
   isbn?: string;
   category?: string;
+  status?: BookStatus;
   availableOnly?: boolean;
+  limit?: number;
+  offset?: number;
 }
 
 export async function searchBooks(
   deps: SearchBooksDeps,
   payload: SearchBooksPayload
 ) {
-  if (!payload.title && !payload.author && !payload.isbn && !payload.category) {
+  const hasSearchCriteria = payload.query || payload.title || payload.author || payload.isbn || payload.category || payload.status;
+
+  if (!hasSearchCriteria) {
     if (payload.availableOnly) {
       const books = await deps.bookService.findAvailable();
       return {
@@ -35,6 +41,11 @@ export async function searchBooks(
 
   const criteria: BookSearchCriteria = {};
   
+  if (payload.query) {
+    const query = payload.query.trim();
+    criteria.query = query;
+  }
+  
   if (payload.title) {
     criteria.title = payload.title.trim();
   }
@@ -47,8 +58,18 @@ export async function searchBooks(
   if (payload.category) {
     criteria.category = payload.category.trim();
   }
-  if (payload.availableOnly) {
+  
+  if (payload.status) {
+    criteria.status = payload.status;
+  } else if (payload.availableOnly) {
     criteria.status = BookStatus.AVAILABLE;
+  }
+  
+  if (payload.limit) {
+    criteria.limit = payload.limit;
+  }
+  if (payload.offset) {
+    criteria.offset = payload.offset;
   }
 
   const books = await deps.bookService.search(criteria);

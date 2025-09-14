@@ -37,7 +37,7 @@ export const Modal: React.FC<ModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
+    <div className="fixed max-w-2xl mx-auto inset-0 z-50 overflow-y-auto">
       <div 
         className="fixed inset-0 bg-black/50 transition-opacity"
         onClick={onClose}

@@ -7,6 +7,7 @@ import { AuthPage } from "./pages/auth.js";
 import { BooksPage } from "./pages/books.js";
 import { LoansPage } from "./pages/loans.js";
 import { AdminBooksPage } from "./pages/admin-books.js";
+import { ToastContainer } from 'react-toastify';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -78,6 +79,18 @@ export function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Layout>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </BrowserRouter>
     </AuthProvider>
   );

@@ -85,6 +85,12 @@ export class DatabaseBookService implements BookService {
     let query = 'SELECT * FROM books WHERE 1=1';
     const queryParams: any[] = [];
 
+    if (criteria.query) {
+      query += ' AND (title LIKE ? OR author LIKE ? OR isbn LIKE ?)';
+      const searchTerm = `%${criteria.query}%`;
+      queryParams.push(searchTerm, searchTerm, searchTerm);
+    }
+
     if (criteria.title) {
       query += ' AND title LIKE ?';
       queryParams.push(`%${criteria.title}%`);
@@ -111,6 +117,16 @@ export class DatabaseBookService implements BookService {
     }
 
     query += ' ORDER BY title ASC';
+
+    if (criteria.limit) {
+      query += ' LIMIT ?';
+      queryParams.push(criteria.limit);
+      
+      if (criteria.offset) {
+        query += ' OFFSET ?';
+        queryParams.push(criteria.offset);
+      }
+    }
 
     const stmt = this.db.prepare(query);
     const rows = stmt.all(...queryParams) as any[];

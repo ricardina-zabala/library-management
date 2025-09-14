@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useLoans } from '../hooks/useLoans.js';
 import { useAuth } from '../hooks/useAuth.js';
-import { useBooks } from '../hooks/useBooks.js';
-import type { Loan } from 'app-domain';
 import { LoanStatus } from 'app-domain';
+import { toast } from 'react-toastify';
 
 export const LoansPage = () => {
   const { loans, loading, error, getUserLoans, returnBook } = useLoans();
@@ -18,12 +17,12 @@ export const LoansPage = () => {
   const handleReturnBook = async (loanId: string) => {
     const response = await returnBook({ loanId });
     if (response.success) {
-      alert('Book returned successfully!');
+      toast.success('¡Libro devuelto exitosamente!');
       if (user) {
         getUserLoans(user.id);
       }
     } else {
-      alert(response.error || 'Failed to return book');
+      toast.error('No se pudo devolver el libro');
     }
   };
 

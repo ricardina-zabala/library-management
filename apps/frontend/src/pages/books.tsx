@@ -7,6 +7,7 @@ import { useLoans } from '../hooks/useLoans.js';
 import { useAuth } from '../hooks/useAuth.js';
 import { BookStatus } from 'app-domain';
 import type { Book } from 'app-domain';
+import { toast } from 'react-toastify';
 
 export const BooksPage = () => {
   const { books, loading, error, searchBooks, getBook } = useBooks();
@@ -47,16 +48,16 @@ export const BooksPage = () => {
 
   const handleBorrowBook = async (bookId: string) => {
     if (!user) {
-      alert('Please login to borrow books');
+      toast.warning('Por favor inicia sesión para pedir libros prestados');
       return;
     }
 
     const response = await borrowBook({ bookId, userId: user.id });
     if (response.success) {
       searchBooks();
-      alert('¡Libro prestado exitosamente!');
+      toast.success('¡Libro prestado exitosamente!');
     } else {
-      alert(response.error || 'Error al solicitar el préstamo del libro');
+      toast.error('Error al solicitar el préstamo del libro');
     }
   };
 
@@ -71,28 +72,28 @@ export const BooksPage = () => {
           setSelectedBook(useCaseResponse.book);
           setIsDetailModalOpen(true);
         } else {
-          console.log(useCaseResponse.error || 'Error al obtener los detalles del libro');
+          toast.error('Error al obtener los detalles del libro');
         }
       } else {
-        console.log(response.error || 'Error al obtener los detalles del libro');
+         toast.error(response.error || 'Error al obtener los detalles del libro');
       }
     } catch (error) {
-      console.log('Error inesperado al obtener los detalles del libro');
+       toast.error('Error inesperado al obtener los detalles del libro');
     }
   };
 
   const handleReturnBook = async (bookId: string) => {
     if (!user) {
-      alert('Please login to return books');  
+      toast.warning('Por favor inicia sesión para devolver libros');  
       return;
     }
 
     const response = await returnBookByBookId(bookId, user.id);
     if (response.success) {
       searchBooks();
-      alert('¡Libro devuelto exitosamente!');
+      toast.success('¡Libro devuelto exitosamente!');
     } else {
-      alert(response.error || 'Error al devolver el libro');
+      toast.error('Error al devolver el libro');
     }
   };
 

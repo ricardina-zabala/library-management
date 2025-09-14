@@ -19,11 +19,14 @@ export interface UpdateBookData {
 }
 
 export interface BookSearchCriteria {
+  query?: string;
   title?: string;
   author?: string;
   isbn?: string;
   category?: string;
   status?: BookStatus;
+  limit?: number;
+  offset?: number;
 }
 
 export interface BookService {

@@ -5,11 +5,13 @@ import { useBooks } from '../hooks/useBooks.js';
 import { useAuth } from '../hooks/useAuth.js';
 import { Modal } from '../components/modal.js';
 import { BookForm, type BookFormData } from '../components/book-form.js';
+import { SearchFilters } from '../components/search-filters.js';
+import { toast } from 'react-toastify';
 
 export const AdminBooksPage = () => {
   const { books, loading, error, searchBooks, createBook, updateBook, deleteBook } = useBooks();
   const { user } = useAuth();
-  
+
   const mapUserRole = (role: string): UserRole => {
     switch (role) {
       case 'admin':
@@ -35,10 +37,10 @@ export const AdminBooksPage = () => {
         return status;
     }
   };
-  
+
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
-  
+  const [categories, setCategories] = useState<string[]>([]);
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -50,36 +52,63 @@ export const AdminBooksPage = () => {
   }, [searchBooks]);
 
   useEffect(() => {
-    if (!searchQuery.trim()) {
-      setFilteredBooks(books);
+    const uniqueCategories = Array.from(new Set(books.map(book => book.category)));
+    setCategories(uniqueCategories);
+  }, [books]);
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+    if (query.trim()) {
+      searchBooks({ query: query.trim() });
     } else {
-      const filtered = books.filter(book =>
-        book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        book.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        book.isbn.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        book.category.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setFilteredBooks(filtered);
+      searchBooks();
     }
-  }, [books, searchQuery]);
+  };
+
+  const handleFilterByStatus = (status: BookStatus | 'all') => {
+    if (status === 'all') {
+      if (searchQuery.trim()) {
+        searchBooks({ query: searchQuery.trim() });
+      } else {
+        searchBooks();
+      }
+    } else {
+      const searchParams = searchQuery.trim() ? { query: searchQuery.trim(), status } : { status };
+      searchBooks(searchParams);
+    }
+  };
+
+  const handleFilterByCategory = (category: string) => {
+    if (category === 'all') {
+      if (searchQuery.trim()) {
+        searchBooks({ query: searchQuery.trim() });
+      } else {
+        searchBooks();
+      }
+    } else {
+      const searchParams = searchQuery.trim() ? { query: searchQuery.trim(), category } : { category };
+      searchBooks(searchParams);
+    }
+  };
 
   const handleCreateBook = async (formData: BookFormData) => {
     if (!user) return;
-    
+
     setIsSubmitting(true);
     try {
       const response = await createBook({
         ...formData,
         userRole: mapUserRole(user.role)
       });
-      
+
       if (response.success) {
         setIsCreateModalOpen(false);
+        toast.success('Libro creado exitosamente');
       } else {
-        console.log(response.error || 'Error al crear el libro');
+        toast.error('Error al crear el libro');
       }
     } catch (error) {
-      console.log("Error al crear el libro", error)
+      toast.error('Error al crear el libro');
     } finally {
       setIsSubmitting(false);
     }
@@ -87,7 +116,7 @@ export const AdminBooksPage = () => {
 
   const handleEditBook = async (formData: BookFormData) => {
     if (!user || !selectedBook) return;
-    
+
     setIsSubmitting(true);
     try {
       const response = await updateBook({
@@ -95,16 +124,16 @@ export const AdminBooksPage = () => {
         ...formData,
         userRole: mapUserRole(user.role)
       });
-      
+
       if (response.success) {
         setIsEditModalOpen(false);
         setSelectedBook(null);
-        alert('Libro actualizado exitosamente');
+        toast.success('Libro actualizado exitosamente');
       } else {
-        alert(response.error || 'Error al actualizar el libro');
+        toast.error('Error al actualizar el libro');
       }
     } catch (error) {
-      alert('Error al actualizar el libro');
+      toast.error('Error al actualizar el libro');
     } finally {
       setIsSubmitting(false);
     }
@@ -112,23 +141,23 @@ export const AdminBooksPage = () => {
 
   const handleDeleteBook = async () => {
     if (!user || !selectedBook) return;
-    
+
     setIsSubmitting(true);
     try {
       const response = await deleteBook({
         bookId: selectedBook.id,
         userRole: mapUserRole(user.role)
       });
-      
+
       if (response.success) {
         setIsDeleteModalOpen(false);
         setSelectedBook(null);
-        alert('Libro eliminado exitosamente');
+        toast.success('Libro eliminado exitosamente');
       } else {
-        alert(response.error || 'Error al eliminar el libro');
+        toast.error('Error al eliminar el libro');
       }
     } catch (error) {
-      alert('Error al eliminar el libro');
+      toast.error('Error al eliminar el libro');
     } finally {
       setIsSubmitting(false);
     }
@@ -177,15 +206,13 @@ export const AdminBooksPage = () => {
         </button>
       </div>
 
-      <div className="mb-6">
-        <input
-          type="text"
-          placeholder="Buscar por título, autor, ISBN o categoría..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-        />
-      </div>
+      <SearchFilters
+        onSearch={handleSearchChange}
+        onFilterByStatus={handleFilterByStatus}
+        onFilterByCategory={handleFilterByCategory}
+        categories={categories}
+        placeholder="Buscar libros por título, autor, ISBN o categoría..."
+      />
 
       {error && (
         <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-md">
@@ -230,14 +257,14 @@ export const AdminBooksPage = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredBooks.length === 0 ? (
+                  {books.length === 0 ? (
                     <tr>
                       <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
                         {searchQuery ? 'No se encontraron libros que coincidan con tu búsqueda' : 'No hay libros disponibles'}
                       </td>
                     </tr>
                   ) : (
-                    filteredBooks.map((book) => (
+                    books.map((book: Book) => (
                       <tr key={book.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
@@ -258,15 +285,14 @@ export const AdminBooksPage = () => {
                           {book.availableCopies}/{book.totalCopies}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            book.status === BookStatus.AVAILABLE 
+                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${book.status === BookStatus.AVAILABLE
                               ? 'bg-green-100 text-green-800'
                               : book.status === BookStatus.BORROWED
-                              ? 'bg-yellow-100 text-yellow-800' 
-                              : book.status === BookStatus.RESERVED
-                              ? 'bg-blue-100 text-blue-800'
-                              : 'bg-red-100 text-red-800'
-                          }`}>
+                                ? 'bg-yellow-100 text-yellow-800'
+                                : book.status === BookStatus.RESERVED
+                                  ? 'bg-blue-100 text-blue-800'
+                                  : 'bg-red-100 text-red-800'
+                            }`}>
                             {mapBookStatus(book.status)}
                           </span>
                         </td>
@@ -293,14 +319,14 @@ export const AdminBooksPage = () => {
           </div>
 
           <div className="md:hidden space-y-4">
-            {filteredBooks.length === 0 ? (
+            {books.length === 0 ? (
               <div className="bg-white shadow-md rounded-lg p-6 text-center">
                 <p className="text-gray-500">
                   {searchQuery ? 'No se encontraron libros que coincidan con tu búsqueda' : 'No hay libros disponibles'}
                 </p>
               </div>
             ) : (
-              filteredBooks.map((book) => (
+              books.map((book: Book) => (
                 <div key={book.id} className="bg-white shadow-md rounded-lg p-4 border border-gray-200">
                   <div className="flex flex-col space-y-3">
                     <div className="flex justify-between items-start">
@@ -308,15 +334,14 @@ export const AdminBooksPage = () => {
                         <h3 className="text-lg font-semibold text-gray-900 mb-1">{book.title}</h3>
                         <p className="text-sm text-gray-600 mb-2">{book.author}</p>
                       </div>
-                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ml-2 ${
-                        book.status === BookStatus.AVAILABLE 
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ml-2 ${book.status === BookStatus.AVAILABLE
                           ? 'bg-green-100 text-green-800'
                           : book.status === BookStatus.BORROWED
-                          ? 'bg-yellow-100 text-yellow-800' 
-                          : book.status === BookStatus.RESERVED
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}>
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : book.status === BookStatus.RESERVED
+                              ? 'bg-blue-100 text-blue-800'
+                              : 'bg-red-100 text-red-800'
+                        }`}>
                         {mapBookStatus(book.status)}
                       </span>
                     </div>
