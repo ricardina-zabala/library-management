@@ -13,23 +13,23 @@ export const BookCard = ({ book, onBorrow, onReturn, onDetails }: BookCardProps)
     switch (status) {
       case BookStatus.AVAILABLE:
         return {
-          badge: 'bg-green-100 text-green-800',
-          border: 'border-l-green-500'
+          badge: 'bg-primary-100 text-primary-800',
+          border: 'border-l-primary-500'
         };
       case BookStatus.BORROWED:
         return {
-          badge: 'bg-yellow-100 text-yellow-800',
-          border: 'border-l-yellow-500'
+          badge: 'bg-primary-200 text-primary-700',
+          border: 'border-l-primary-400'
         };
       case BookStatus.RESERVED:
         return {
-          badge: 'bg-blue-100 text-blue-800',
-          border: 'border-l-blue-500'
+          badge: 'bg-primary-300 text-primary-800',
+          border: 'border-l-primary-600'
         };
       case BookStatus.MAINTENANCE:
         return {
-          badge: 'bg-red-100 text-red-800',
-          border: 'border-l-red-500'
+          badge: 'bg-primary-400 text-primary-900',
+          border: 'border-l-primary-700'
         };
       default:
         return {
@@ -44,7 +44,7 @@ export const BookCard = ({ book, onBorrow, onReturn, onDetails }: BookCardProps)
   const canReturn = book.status === BookStatus.BORROWED;
 
   return (
-    <div className={`bg-white border border-gray-200 rounded-lg p-4 m-2 shadow-md hover:shadow-lg transition-shadow duration-200 max-w-sm min-w-[280px] ${statusStyles.border} border-l-4`}>
+    <div className={`bg-white border border-gray-100 rounded-xl p-6 m-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 max-w-sm min-w-[280px] ${statusStyles.border} border-l-4`}>
       <div className="flex justify-between items-start mb-3 gap-3">
         <h3 className="text-lg font-semibold text-gray-800 line-clamp-2 flex-1" title={book.title}>
           {book.title}
@@ -70,7 +70,7 @@ export const BookCard = ({ book, onBorrow, onReturn, onDetails }: BookCardProps)
       <div className="flex gap-2 justify-end">
         {onDetails && (
           <button 
-            className="px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded hover:bg-gray-700 transition-colors duration-200"
+            className="px-4 py-2 text-sm font-medium text-primary-600 bg-primary-50 rounded-lg hover:bg-primary-100 border border-primary-200 transition-colors duration-200"
             onClick={onDetails}
           >
             Details
@@ -79,7 +79,7 @@ export const BookCard = ({ book, onBorrow, onReturn, onDetails }: BookCardProps)
         
         {canBorrow && onBorrow && (
           <button 
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 transition-colors duration-200"
+            className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg hover:from-primary-600 hover:to-primary-700 shadow-md hover:shadow-lg transition-all duration-200"
             onClick={onBorrow}
           >
             Borrow
@@ -88,7 +88,7 @@ export const BookCard = ({ book, onBorrow, onReturn, onDetails }: BookCardProps)
         
         {canReturn && onReturn && (
           <button 
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 transition-colors duration-200"
+            className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg hover:from-primary-600 hover:to-primary-700 shadow-md hover:shadow-lg transition-all duration-200"
             onClick={onReturn}
           >
             Return

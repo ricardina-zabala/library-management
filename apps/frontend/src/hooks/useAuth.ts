@@ -108,13 +108,14 @@ export const useAuth = () => {
   };
 
   const logout = () => {
-    localStorage.removeItem('authToken');
+    localStorage.clear();
     setState({
       user: null,
       token: null,
       isAuthenticated: false,
       isLoading: false,
     });
+    window.location.reload();
   };
 
   return {
