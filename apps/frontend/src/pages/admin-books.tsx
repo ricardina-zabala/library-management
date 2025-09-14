@@ -10,7 +10,6 @@ export const AdminBooksPage = () => {
   const { books, loading, error, searchBooks, createBook, updateBook, deleteBook } = useBooks();
   const { user } = useAuth();
   
-  // Mapear rol del usuario al formato esperado por el backend
   const mapUserRole = (role: string): UserRole => {
     switch (role) {
       case 'admin':
@@ -19,6 +18,21 @@ export const AdminBooksPage = () => {
         return UserRole.LIBRARIAN;
       default:
         return UserRole.MEMBER;
+    }
+  };
+
+  const mapBookStatus = (status: BookStatus): string => {
+    switch (status) {
+      case BookStatus.AVAILABLE:
+        return 'Disponible';
+      case BookStatus.BORROWED:
+        return 'Prestado';
+      case BookStatus.RESERVED:
+        return 'Reservado';
+      case BookStatus.MAINTENANCE:
+        return 'Mantenimiento';
+      default:
+        return status;
     }
   };
   
@@ -139,7 +153,7 @@ export const AdminBooksPage = () => {
 
   if (!user || user.role !== 'admin') {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="px-4 py-8">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-red-600 mb-4">Acceso Denegado</h1>
           <p className="text-gray-600">Solo los administradores pueden acceder a esta página.</p>
@@ -149,8 +163,8 @@ export const AdminBooksPage = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
+    <div className="px-4 py-8">
+      <div className="flex flex-wrap justify-between items-center mb-6 space-y-2">
         <h1 className="text-3xl font-bold text-gray-900">Administración de Libros</h1>
         <button
           onClick={() => setIsCreateModalOpen(true)}
@@ -186,97 +200,168 @@ export const AdminBooksPage = () => {
       )}
 
       {!loading && (
-        <div className="bg-white shadow-md rounded-lg overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Libro
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  ISBN
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Categoría
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Año
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Copias
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Estado
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Acciones
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredBooks.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
-                    {searchQuery ? 'No se encontraron libros que coincidan con tu búsqueda' : 'No hay libros disponibles'}
-                  </td>
-                </tr>
-              ) : (
-                filteredBooks.map((book) => (
-                  <tr key={book.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">{book.title}</div>
-                        <div className="text-sm text-gray-500">{book.author}</div>
+        <>
+          <div className="hidden md:block bg-white shadow-md rounded-lg overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Libro
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      ISBN
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Categoría
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Año
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Copias
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Estado
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Acciones
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {filteredBooks.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
+                        {searchQuery ? 'No se encontraron libros que coincidan con tu búsqueda' : 'No hay libros disponibles'}
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredBooks.map((book) => (
+                      <tr key={book.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">{book.title}</div>
+                            <div className="text-sm text-gray-500">{book.author}</div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {book.isbn}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {book.category}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {book.publishedYear}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {book.availableCopies}/{book.totalCopies}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            book.status === BookStatus.AVAILABLE 
+                              ? 'bg-green-100 text-green-800'
+                              : book.status === BookStatus.BORROWED
+                              ? 'bg-yellow-100 text-yellow-800' 
+                              : book.status === BookStatus.RESERVED
+                              ? 'bg-blue-100 text-blue-800'
+                              : 'bg-red-100 text-red-800'
+                          }`}>
+                            {mapBookStatus(book.status)}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <button
+                            onClick={() => openEditModal(book)}
+                            className="text-primary-600 hover:text-primary-900 mr-3"
+                          >
+                            Editar
+                          </button>
+                          <button
+                            onClick={() => openDeleteModal(book)}
+                            className="text-red-600 hover:text-red-900"
+                          >
+                            Eliminar
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="md:hidden space-y-4">
+            {filteredBooks.length === 0 ? (
+              <div className="bg-white shadow-md rounded-lg p-6 text-center">
+                <p className="text-gray-500">
+                  {searchQuery ? 'No se encontraron libros que coincidan con tu búsqueda' : 'No hay libros disponibles'}
+                </p>
+              </div>
+            ) : (
+              filteredBooks.map((book) => (
+                <div key={book.id} className="bg-white shadow-md rounded-lg p-4 border border-gray-200">
+                  <div className="flex flex-col space-y-3">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-1">{book.title}</h3>
+                        <p className="text-sm text-gray-600 mb-2">{book.author}</p>
                       </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {book.isbn}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {book.category}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {book.publishedYear}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {book.availableCopies}/{book.totalCopies}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ml-2 ${
                         book.status === BookStatus.AVAILABLE 
                           ? 'bg-green-100 text-green-800'
                           : book.status === BookStatus.BORROWED
                           ? 'bg-yellow-100 text-yellow-800' 
+                          : book.status === BookStatus.RESERVED
+                          ? 'bg-blue-100 text-blue-800'
                           : 'bg-red-100 text-red-800'
                       }`}>
-                        {book.status === BookStatus.AVAILABLE ? 'Disponible' : 
-                         book.status === BookStatus.BORROWED ? 'Prestado' : 
-                         book.status}
+                        {mapBookStatus(book.status)}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div>
+                        <span className="font-medium text-gray-700">ISBN:</span>
+                        <p className="text-gray-900">{book.isbn}</p>
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-700">Categoría:</span>
+                        <p className="text-gray-900">{book.category}</p>
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-700">Año:</span>
+                        <p className="text-gray-900">{book.publishedYear}</p>
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-700">Copias:</span>
+                        <p className="text-gray-900">{book.availableCopies}/{book.totalCopies}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end space-x-3 pt-3 border-t border-gray-200">
                       <button
                         onClick={() => openEditModal(book)}
-                        className="text-primary-600 hover:text-primary-900 mr-3"
+                        className="px-3 py-2 text-sm text-primary-600 hover:text-primary-900 hover:bg-primary-50 rounded-md transition-colors"
                       >
                         Editar
                       </button>
                       <button
                         onClick={() => openDeleteModal(book)}
-                        className="text-red-600 hover:text-red-900"
+                        className="px-3 py-2 text-sm text-red-600 hover:text-red-900 hover:bg-red-50 rounded-md transition-colors"
                       >
                         Eliminar
                       </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </>
       )}
 
-      {/* Create Book Modal */}
       <Modal
         isOpen={isCreateModalOpen}
         onClose={closeModals}
@@ -291,7 +376,6 @@ export const AdminBooksPage = () => {
         />
       </Modal>
 
-      {/* Edit Book Modal */}
       <Modal
         isOpen={isEditModalOpen}
         onClose={closeModals}
@@ -309,7 +393,6 @@ export const AdminBooksPage = () => {
         )}
       </Modal>
 
-      {/* Delete Confirmation Modal */}
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={closeModals}
