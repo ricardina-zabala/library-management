@@ -3178,6 +3178,7 @@ __metadata:
     bcrypt: "npm:^6.0.0"
     better-sqlite3: "npm:^12.2.0"
     cors: "npm:^2.8.5"
+    dotenv: "npm:^17.2.2"
     express: "npm:^5.1.0"
     jsonwebtoken: "npm:^9.0.2"
     nodemailer: "npm:^7.0.6"
@@ -3688,6 +3689,13 @@ __metadata:
   version: 0.6.3
   resolution: "dom-accessibility-api@npm:0.6.3"
   checksum: 10c0/10bee5aa514b2a9a37c87cd81268db607a2e933a050074abc2f6fa3da9080ebed206a320cbc123567f2c3087d22292853bdfdceaffdd4334ffe2af9510b29360
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^17.2.2":
+  version: 17.2.2
+  resolution: "dotenv@npm:17.2.2"
+  checksum: 10c0/be66513504590aff6eccb14167625aed9bd42ce80547f4fe5d195860211971a7060949b57108dfaeaf90658f79e40edccd3f233f0a978bff507b5b1565ae162b
   languageName: node
   linkType: hard
 

@@ -203,8 +203,11 @@ export const useBooks = () => {
     setError(null);
 
     try {
-      // TODO: Change to 'requestLoan' when types are updated
-      const response = await api('borrowBook', payload as unknown as Record<string, unknown>);
+      const response = await api('requestLoan', {
+        userId: payload.userId,
+        bookId: payload.bookId,
+        requestingUserRole: UserRole.MEMBER
+      });
       
       if (!response.success) {
         setError(response.error || 'Failed to request loan');
