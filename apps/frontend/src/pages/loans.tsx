@@ -73,7 +73,7 @@ export const LoansPage = () => {
             <p className="text-gray-500 text-lg">You haven't borrowed any books yet.</p>
             <a
               href="/books"
-              className="mt-4 inline-block bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+              className="mt-4 inline-block bg-primary-600 text-white px-6 py-2 rounded hover:bg-primary-700"
             >
               Browse Books
             </a>

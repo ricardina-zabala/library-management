@@ -18,7 +18,7 @@ export default function Home() {
           {isAuthenticated ? (
             <div className="space-y-6">
               <p className="text-lg text-gray-700">
-                ¡Bienvenido de nuevo, <span className="font-semibold">{user?.name}</span>!
+                ¡Bienvenido de nuevo, <span className="font-semibold">{`${user?.firstName}`}</span>!
               </p>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">

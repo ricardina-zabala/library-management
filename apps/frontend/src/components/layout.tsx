@@ -48,7 +48,7 @@ export const Layout = ({ children }: LayoutProps) => {
               {isAuthenticated ? (
                 <>
                   <span className="text-primary-100 text-sm">
-                    Bienvenido, {user?.name}
+                    Bienvenido, {`${user?.firstName}`}
                   </span>
                   <button
                     onClick={logout}

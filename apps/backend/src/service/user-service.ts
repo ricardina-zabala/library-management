@@ -28,7 +28,11 @@ export class DatabaseUserService implements AuthService, UserService {
       }
 
       const token = this.generateToken(user);
-      const userWithoutPassword = { ...user, password: '' };
+      const userWithoutPassword = { 
+        ...user, 
+        password: '',
+        name: `${user.firstName} ${user.lastName}`
+      };
 
       return { success: true, user: userWithoutPassword, token };
     } catch (error) {

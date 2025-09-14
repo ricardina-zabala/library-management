@@ -16,8 +16,10 @@ interface RegisterPayload {
 interface User {
   id: string;
   email: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   role: 'user' | 'admin';
+  name?: string;
 }
 
 interface AuthState {
@@ -37,7 +39,7 @@ export const useAuth = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    if (token) {
+    if (token && token !== 'null' && token !== 'undefined') {
       validateToken(token);
     } else {
       setState(prev => ({ ...prev, isLoading: false }));
@@ -45,11 +47,18 @@ export const useAuth = () => {
   }, []);
 
   const validateToken = async (token: string) => {
+    if (!token || token === 'undefined' || token === 'null') {
+      logout();
+      return;
+    }
+
     try {
       const response = await api('validateToken', { token });
-      if (response.success && response.data) {
+      const useCaseResponse = response.data;
+      
+      if (response.success && useCaseResponse?.success && useCaseResponse.user) {
         setState({
-          user: response.data.user,
+          user: useCaseResponse.user,
           token,
           isAuthenticated: true,
           isLoading: false,
@@ -67,9 +76,10 @@ export const useAuth = () => {
     
     try {
       const response = await api('loginUser', payload as unknown as Record<string, unknown>);
+      const useCaseResponse = response.data;
       
-      if (response.success && response.data) {
-        const { user, token } = response.data;
+      if (response.success && useCaseResponse?.success && useCaseResponse.user && useCaseResponse.token) {
+        const { user, token } = useCaseResponse;
         localStorage.setItem('authToken', token);
         setState({
           user,
@@ -81,7 +91,7 @@ export const useAuth = () => {
         setState(prev => ({ ...prev, isLoading: false }));
       }
       
-      return response;
+      return response.success && response.data ? response.data : response;
     } catch (error) {
       setState(prev => ({ ...prev, isLoading: false }));
       return {
@@ -97,7 +107,8 @@ export const useAuth = () => {
     try {
       const response = await api('registerUser', payload as unknown as Record<string, unknown>);
       setState(prev => ({ ...prev, isLoading: false }));
-      return response;
+      
+      return response.success && response.data ? response.data : response;
     } catch (error) {
       setState(prev => ({ ...prev, isLoading: false }));
       return {
