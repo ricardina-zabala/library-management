@@ -23,24 +23,21 @@ export const useLoans = () => {
     try {
       const response = await api<Loan[]>('getUserLoans', { userId });
       
-      console.log('getUserLoans response:', response); // Debug log
       
       if (response.success && response.data) {
-        // Ensure response.data is an array
         const loansData = Array.isArray(response.data) ? response.data : [];
         setLoans(loansData);
       } else {
-        console.error('Get user loans failed:', response.error); // Debug log
         setError(response.error || 'Failed to get user loans');
-        setLoans([]); // Reset to empty array on error
+        setLoans([]);
       }
       
       return response;
     } catch (error) {
-      console.error('Get user loans error:', error); // Debug log
+      console.error('Get user loans error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to get user loans';
       setError(errorMessage);
-      setLoans([]); // Reset to empty array on error
+      setLoans([]);
       return {
         success: false,
         error: errorMessage,
@@ -84,9 +81,14 @@ export const useLoans = () => {
       const response = await api<Loan>('returnBook', payload as unknown as Record<string, unknown>);
       
       if (response.success && response.data) {
-        setLoans(prev => Array.isArray(prev) ? prev.map(loan => 
-          loan.id === response.data!.id ? response.data! : loan
-        ) : [response.data!]);
+        const useCaseResponse = response.data as any;
+        if (useCaseResponse.success && useCaseResponse.loan) {
+          setLoans(prev => Array.isArray(prev) ? prev.map(loan => 
+            loan.id === useCaseResponse.loan.id ? useCaseResponse.loan : loan
+          ) : [useCaseResponse.loan]);
+        } else {
+          setError(useCaseResponse.error || 'Failed to return book');
+        }
       } else {
         setError(response.error || 'Failed to return book');
       }
@@ -104,6 +106,48 @@ export const useLoans = () => {
     }
   }, []);
 
+  const returnBookByBookId = useCallback(async (bookId: string, userId: string): Promise<ApiResponse<Loan>> => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const loansResponse = await getUserLoans(userId);
+      if (loansResponse.success && loansResponse.data) {
+        const userLoans = Array.isArray(loansResponse.data) ? loansResponse.data : [];
+        const activeLoan = userLoans.find(loan => 
+          loan.bookId === bookId && loan.status === 'active'
+        );
+
+        if (activeLoan) {
+          return await returnBook({ loanId: activeLoan.id });
+        } else {
+          const errorMessage = 'No active loan found for this book';
+          setError(errorMessage);
+          return {
+            success: false,
+            error: errorMessage,
+          };
+        }
+      } else {
+        const errorMessage = loansResponse.error || 'Failed to get user loans';
+        setError(errorMessage);
+        return {
+          success: false,
+          error: errorMessage,
+        };
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to return book';
+      setError(errorMessage);
+      return {
+        success: false,
+        error: errorMessage,
+      };
+    } finally {
+      setLoading(false);
+    }
+  }, [getUserLoans, returnBook]);
+
   const clearError = useCallback(() => {
     setError(null);
   }, []);
@@ -115,6 +159,7 @@ export const useLoans = () => {
     getUserLoans,
     borrowBook,
     returnBook,
+    returnBookByBookId,
     clearError,
   };
 };

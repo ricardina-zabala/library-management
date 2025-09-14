@@ -197,7 +197,7 @@ export class DatabaseUserService implements AuthService, UserService {
     return rows.map(row => ({
       id: row.id,
       email: row.email,
-      password: '', // Don't return passwords
+      password: '',
       firstName: row.firstName,
       lastName: row.lastName,
       role: row.role as UserRole,
@@ -258,7 +258,7 @@ export class DatabaseUserService implements AuthService, UserService {
     return rows.map(row => ({
       id: row.id,
       email: row.email,
-      password: '', // Don't return passwords
+      password: '',
       firstName: row.firstName,
       lastName: row.lastName,
       role: row.role as UserRole,

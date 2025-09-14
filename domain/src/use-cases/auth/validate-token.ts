@@ -28,7 +28,6 @@ export async function validateToken(
     };
   }
 
-  // Add computed name field for frontend compatibility
   const userWithName = {
     ...user,
     name: `${user.firstName} ${user.lastName}`

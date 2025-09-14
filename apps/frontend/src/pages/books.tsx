@@ -1,24 +1,26 @@
 import { useEffect, useState } from 'react';
 import { BookList } from '../components/book-list.js';
 import { SearchFilters } from '../components/search-filters.js';
+import { BookDetailModal } from '../components/book-detail-modal.js';
 import { useBooks } from '../hooks/useBooks.js';
 import { useLoans } from '../hooks/useLoans.js';
 import { useAuth } from '../hooks/useAuth.js';
 import { BookStatus } from 'app-domain';
+import type { Book } from 'app-domain';
 
 export const BooksPage = () => {
-  const { books, loading, error, searchBooks } = useBooks();
-  const { borrowBook } = useLoans();
+  const { books, loading, error, searchBooks, getBook } = useBooks();
+  const { borrowBook, returnBookByBookId } = useLoans();
   const { user } = useAuth();
   const [categories, setCategories] = useState<string[]>([]);
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   useEffect(() => {
-    // Load initial books
     searchBooks();
   }, [searchBooks]);
 
   useEffect(() => {
-    // Extract unique categories from books
     const uniqueCategories = Array.from(new Set(books.map(book => book.category)));
     setCategories(uniqueCategories);
   }, [books]);
@@ -58,9 +60,45 @@ export const BooksPage = () => {
     }
   };
 
-  const handleBookDetails = (bookId: string) => {
-    // TODO: Navigate to book details page
-    console.log('View details for book:', bookId);
+  const handleBookDetails = async (bookId: string) => {
+    try {
+      const response = await getBook(bookId);
+      
+      if (response.success && response.data) {
+        const useCaseResponse = response.data as any;
+        
+        if (useCaseResponse.success && useCaseResponse.book) {
+          setSelectedBook(useCaseResponse.book);
+          setIsDetailModalOpen(true);
+        } else {
+          console.log(useCaseResponse.error || 'Error al obtener los detalles del libro');
+        }
+      } else {
+        console.log(response.error || 'Error al obtener los detalles del libro');
+      }
+    } catch (error) {
+      console.log('Error inesperado al obtener los detalles del libro');
+    }
+  };
+
+  const handleReturnBook = async (bookId: string) => {
+    if (!user) {
+      alert('Please login to return books');  
+      return;
+    }
+
+    const response = await returnBookByBookId(bookId, user.id);
+    if (response.success) {
+      searchBooks();
+      alert('¡Libro devuelto exitosamente!');
+    } else {
+      alert(response.error || 'Error al devolver el libro');
+    }
+  };
+
+  const closeDetailModal = () => {
+    setIsDetailModalOpen(false);
+    setSelectedBook(null);
   };
 
   if (error) {
@@ -100,8 +138,19 @@ export const BooksPage = () => {
           books={books}
           loading={loading}
           onBorrow={handleBorrowBook}
+          onReturn={handleReturnBook}
           onDetails={handleBookDetails}
           emptyMessage="No se encontraron libros. Intenta ajustar tus criterios de búsqueda."
+        />
+
+        <BookDetailModal
+          book={selectedBook}
+          isOpen={isDetailModalOpen}
+          onClose={closeDetailModal}
+          onBorrow={selectedBook && selectedBook.status === BookStatus.AVAILABLE && selectedBook.availableCopies > 0 ? () => handleBorrowBook(selectedBook.id) : undefined}
+          onReturn={selectedBook && selectedBook.status === BookStatus.BORROWED ? () => handleReturnBook(selectedBook.id) : undefined}
+          canBorrow={selectedBook ? selectedBook.status === BookStatus.AVAILABLE && selectedBook.availableCopies > 0 : false}
+          canReturn={selectedBook ? selectedBook.status === BookStatus.BORROWED : false}
         />
       </div>
     </div>

@@ -48,8 +48,6 @@ export const useBooks = () => {
     try {
       const response = await api('searchBooks', payload as unknown as Record<string, unknown>);
       
-      console.log('searchBooks response:', response);
-      
       if (response.success && response.data) {
         const useCaseResponse = response.data;
         if (useCaseResponse.success && useCaseResponse.books) {
@@ -86,7 +84,7 @@ export const useBooks = () => {
     setError(null);
 
     try {
-      const response = await api<Book>('getBook', { bookId });
+      const response = await api<Book>('getBook', { id: bookId });
       return response;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to get book';

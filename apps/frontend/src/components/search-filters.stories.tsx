@@ -58,18 +58,15 @@ export const Interactive: Story = {
     categories: sampleCategories,
     onSearch: (query: string) => {
       console.log('Search query:', query);
-      // Simulate API call
       setTimeout(() => {
         console.log('Search results for:', query);
       }, 500);
     },
     onFilterByStatus: (status: BookStatus | 'all') => {
       console.log('Filtering by status:', status);
-      // Simulate filtering
     },
     onFilterByCategory: (category: string) => {
       console.log('Filtering by category:', category);
-      // Simulate filtering
     },
   },
 };

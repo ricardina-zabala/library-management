@@ -73,7 +73,7 @@ export const BookCard = ({ book, onBorrow, onReturn, onDetails }: BookCardProps)
             className="px-4 py-2 text-sm font-medium text-primary-600 bg-primary-50 rounded-lg hover:bg-primary-100 border border-primary-200 transition-colors duration-200"
             onClick={onDetails}
           >
-            Details
+            Detalle
           </button>
         )}
         
@@ -82,7 +82,7 @@ export const BookCard = ({ book, onBorrow, onReturn, onDetails }: BookCardProps)
             className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg hover:from-primary-600 hover:to-primary-700 shadow-md hover:shadow-lg transition-all duration-200"
             onClick={onBorrow}
           >
-            Borrow
+            Pedir prestado
           </button>
         )}
         
@@ -91,7 +91,7 @@ export const BookCard = ({ book, onBorrow, onReturn, onDetails }: BookCardProps)
             className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg hover:from-primary-600 hover:to-primary-700 shadow-md hover:shadow-lg transition-all duration-200"
             onClick={onReturn}
           >
-            Return
+            Devolver
           </button>
         )}
       </div>
