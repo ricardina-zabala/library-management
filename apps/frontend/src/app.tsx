@@ -6,6 +6,7 @@ import Home from "./pages/home.js";
 import { AuthPage } from "./pages/auth.js";
 import { BooksPage } from "./pages/books.js";
 import { LoansPage } from "./pages/loans.js";
+import { AdminBooksPage } from "./pages/admin-books.js";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -63,6 +64,14 @@ export function App() {
               element={
                 <ProtectedRoute>
                   <LoansPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin" 
+              element={
+                <ProtectedRoute>
+                  <AdminBooksPage />
                 </ProtectedRoute>
               } 
             />

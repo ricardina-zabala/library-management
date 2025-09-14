@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import type { Book, BookStatus } from 'app-domain';
+import { UserRole } from 'app-domain';
 import { api, type ApiResponse } from '../controller/api-controller.js';
 
 interface SearchBooksPayload {
@@ -17,6 +18,22 @@ interface CreateBookPayload {
   category: string;
   publishedYear: number;
   totalCopies: number;
+  userRole: UserRole;
+}
+
+interface UpdateBookPayload {
+  bookId: string;
+  title?: string;
+  author?: string;
+  category?: string;
+  publishedYear?: number;
+  totalCopies?: number;
+  userRole: UserRole;
+}
+
+interface DeleteBookPayload {
+  bookId: string;
+  userRole: UserRole;
 }
 
 export const useBooks = () => {
@@ -29,15 +46,22 @@ export const useBooks = () => {
     setError(null);
 
     try {
-      const response = await api<Book[]>('searchBooks', payload as unknown as Record<string, unknown>);
+      const response = await api('searchBooks', payload as unknown as Record<string, unknown>);
       
       console.log('searchBooks response:', response);
       
       if (response.success && response.data) {
-        const booksData = Array.isArray(response.data) ? response.data : [];
-        setBooks(booksData);
+        const useCaseResponse = response.data;
+        if (useCaseResponse.success && useCaseResponse.books) {
+          const booksData = Array.isArray(useCaseResponse.books) ? useCaseResponse.books : [];
+          setBooks(booksData);
+        } else {
+          console.error('Search books failed:', useCaseResponse.error);
+          setError(useCaseResponse.error || 'Failed to search books');
+          setBooks([]);
+        }
       } else {
-        console.error('Search books failed:', response.error);
+        console.error('API call failed:', response.error);
         setError(response.error || 'Failed to search books');
         setBooks([]);
       }
@@ -81,10 +105,15 @@ export const useBooks = () => {
     setError(null);
 
     try {
-      const response = await api<Book>('createBook', payload as unknown as Record<string, unknown>);
+      const response = await api('createBook', payload as unknown as Record<string, unknown>);
       
       if (response.success && response.data) {
-        setBooks(prev => [...prev, response.data!]);
+        const useCaseResponse = response.data;
+        if (useCaseResponse.success && useCaseResponse.book) {
+          setBooks(prev => [...prev, useCaseResponse.book]);
+        } else {
+          setError(useCaseResponse.error || 'Failed to create book');
+        }
       } else {
         setError(response.error || 'Failed to create book');
       }
@@ -92,6 +121,70 @@ export const useBooks = () => {
       return response;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to create book';
+      setError(errorMessage);
+      return {
+        success: false,
+        error: errorMessage,
+      };
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const updateBook = useCallback(async (payload: UpdateBookPayload): Promise<ApiResponse<Book>> => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await api('updateBook', payload as unknown as Record<string, unknown>);
+      
+      if (response.success && response.data) {
+        const useCaseResponse = response.data;
+        if (useCaseResponse.success && useCaseResponse.book) {
+          setBooks(prev => prev.map(book => 
+            book.id === payload.bookId ? useCaseResponse.book : book
+          ));
+        } else {
+          setError(useCaseResponse.error || 'Failed to update book');
+        }
+      } else {
+        setError(response.error || 'Failed to update book');
+      }
+      
+      return response;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update book';
+      setError(errorMessage);
+      return {
+        success: false,
+        error: errorMessage,
+      };
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const deleteBook = useCallback(async (payload: DeleteBookPayload): Promise<ApiResponse<void>> => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await api('deleteBook', payload as unknown as Record<string, unknown>);
+      
+      if (response.success && response.data) {
+        const useCaseResponse = response.data;
+        if (useCaseResponse.success) {
+          setBooks(prev => prev.filter(book => book.id !== payload.bookId));
+        } else {
+          setError(useCaseResponse.error || 'Failed to delete book');
+        }
+      } else {
+        setError(response.error || 'Failed to delete book');
+      }
+      
+      return response;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete book';
       setError(errorMessage);
       return {
         success: false,
@@ -113,6 +206,8 @@ export const useBooks = () => {
     searchBooks,
     getBook,
     createBook,
+    updateBook,
+    deleteBook,
     clearError,
   };
 };

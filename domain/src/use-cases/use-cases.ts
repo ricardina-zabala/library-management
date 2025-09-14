@@ -1,5 +1,5 @@
 import { loginUser, registerUser, validateToken } from "./auth/index.js";
-import { createBook, searchBooks, getBook } from "./books/index.js";
+import { createBook, searchBooks, getBook, updateBook, deleteBook } from "./books/index.js";
 import { borrowBook, returnBook, getUserLoans } from "./loans/index.js";
 
 export interface UseCaseDeclaration {
@@ -30,6 +30,14 @@ export const domainUseCases = {
   },
   getBook: {
     useCase: getBook,
+    enable: true,
+  },
+  updateBook: {
+    useCase: updateBook,
+    enable: true,
+  },
+  deleteBook: {
+    useCase: deleteBook,
     enable: true,
   },
   borrowBook: {
