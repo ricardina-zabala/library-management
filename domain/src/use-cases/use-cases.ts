@@ -1,6 +1,6 @@
 import { loginUser, registerUser, validateToken } from "./auth/index.js";
 import { createBook, searchBooks, getBook, updateBook, deleteBook } from "./books/index.js";
-import { borrowBook, returnBook, getUserLoans } from "./loans/index.js";
+import { borrowBook, returnBook, getUserLoans, getUserLoansWithBooks, renewLoan, requestLoan, approveLoanRequest, rejectLoanRequest, getLoanRequestByToken } from "./loans/index.js";
 
 export interface UseCaseDeclaration {
   useCase: (deps: any, payload: any) => Promise<unknown>;
@@ -50,6 +50,30 @@ export const domainUseCases = {
   },
   getUserLoans: {
     useCase: getUserLoans,
+    enable: true,
+  },
+  getUserLoansWithBooks: {
+    useCase: getUserLoansWithBooks,
+    enable: true,
+  },
+  renewLoan: {
+    useCase: renewLoan,
+    enable: true,
+  },
+  requestLoan: {
+    useCase: requestLoan,
+    enable: true,
+  },
+  approveLoanRequest: {
+    useCase: approveLoanRequest,
+    enable: true,
+  },
+  rejectLoanRequest: {
+    useCase: rejectLoanRequest,
+    enable: true,
+  },
+  getLoanRequestByToken: {
+    useCase: getLoanRequestByToken,
     enable: true,
   },
 } as const satisfies Record<string, UseCaseDeclaration>;

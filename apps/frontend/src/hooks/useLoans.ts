@@ -2,6 +2,16 @@ import { useState, useCallback } from 'react';
 import type { Loan } from 'app-domain';
 import { api, type ApiResponse } from '../controller/api-controller.js';
 
+interface LoanWithBook extends Loan {
+  book: {
+    id: string;
+    title: string;
+    author: string;
+    isbn: string;
+    category: string;
+  };
+}
+
 interface BorrowBookPayload {
   bookId: string;
   userId: string;
@@ -11,21 +21,33 @@ interface ReturnBookPayload {
   loanId: string;
 }
 
+interface RenewLoanPayload {
+  loanId: string;
+}
+
 export const useLoans = () => {
-  const [loans, setLoans] = useState<Loan[]>([]);
+  const [loans, setLoans] = useState<LoanWithBook[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getUserLoans = useCallback(async (userId: string): Promise<ApiResponse<Loan[]>> => {
+  const getUserLoans = useCallback(async (userId: string): Promise<ApiResponse<LoanWithBook[]>> => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await api<Loan[]>('getUserLoans', { userId });
-      
+      const response = await api<any>('getUserLoans', { userId });
       
       if (response.success && response.data) {
-        const loansData = Array.isArray(response.data) ? response.data : [];
+        const loansData = Array.isArray(response.data) ? response.data.map((loan: Loan) => ({
+          ...loan,
+          book: {
+            id: loan.bookId,
+            title: 'Loading...',
+            author: 'Loading...',
+            isbn: '',
+            category: ''
+          }
+        })) : [];
         setLoans(loansData);
       } else {
         setError(response.error || 'Failed to get user loans');
@@ -55,7 +77,18 @@ export const useLoans = () => {
       const response = await api<Loan>('borrowBook', payload as unknown as Record<string, unknown>);
       
       if (response.success && response.data) {
-        setLoans(prev => Array.isArray(prev) ? [...prev, response.data!] : [response.data!]);
+        const newLoan = response.data as Loan;
+        const loanWithBook: LoanWithBook = {
+          ...newLoan,
+          book: {
+            id: newLoan.bookId,
+            title: 'Loading...',
+            author: 'Loading...',
+            isbn: '',
+            category: ''
+          }
+        };
+        setLoans(prev => Array.isArray(prev) ? [...prev, loanWithBook] : [loanWithBook]);
       } else {
         setError(response.error || 'Failed to borrow book');
       }
@@ -148,6 +181,45 @@ export const useLoans = () => {
     }
   }, [getUserLoans, returnBook]);
 
+  const renewLoan = useCallback(async (payload: RenewLoanPayload): Promise<ApiResponse<Loan>> => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await api<Loan>('returnBook', payload as unknown as Record<string, unknown>);
+      
+      if (response.success && response.data) {
+        const renewedLoan = response.data;
+        const renewedLoanWithBook: LoanWithBook = {
+          ...renewedLoan,
+          book: {
+            id: renewedLoan.bookId,
+            title: 'Loading...',
+            author: 'Loading...',
+            isbn: '',
+            category: ''
+          }
+        };
+        setLoans(prev => Array.isArray(prev) ? prev.map(loan => 
+          loan.id === renewedLoanWithBook.id ? renewedLoanWithBook : loan
+        ) : [renewedLoanWithBook]);
+      } else {
+        setError(response.error || 'Failed to renew loan');
+      }
+      
+      return response;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to renew loan';
+      setError(errorMessage);
+      return {
+        success: false,
+        error: errorMessage,
+      };
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const clearError = useCallback(() => {
     setError(null);
   }, []);
@@ -160,6 +232,7 @@ export const useLoans = () => {
     borrowBook,
     returnBook,
     returnBookByBookId,
+    renewLoan,
     clearError,
   };
 };

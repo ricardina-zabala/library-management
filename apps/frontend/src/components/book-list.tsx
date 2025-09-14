@@ -6,6 +6,7 @@ export interface BookListProps {
   onBorrow?: (bookId: string) => void;
   onReturn?: (bookId: string) => void;
   onDetails?: (bookId: string) => void;
+  onRequestLoan?: (bookId: string) => void;
   loading?: boolean;
   emptyMessage?: string;
 }
@@ -15,6 +16,7 @@ export const BookList = ({
   onBorrow,
   onReturn,
   onDetails,
+  onRequestLoan,
   loading = false,
   emptyMessage = "No books found"
 }: BookListProps) => {
@@ -43,6 +45,7 @@ export const BookList = ({
           if (onBorrow) cardProps.onBorrow = () => onBorrow(book.id);
           if (onReturn) cardProps.onReturn = () => onReturn(book.id);
           if (onDetails) cardProps.onDetails = () => onDetails(book.id);
+          if (onRequestLoan) cardProps.onRequestLoan = () => onRequestLoan(book.id);
 
           return <BookCard key={book.id} {...cardProps} />;
         })}

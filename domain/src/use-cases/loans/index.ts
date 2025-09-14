@@ -1,3 +1,9 @@
 export { borrowBook, type BorrowBookDeps, type BorrowBookPayload } from "./borrow-book.js";
 export { returnBook, type ReturnBookDeps, type ReturnBookPayload } from "./return-book.js";
 export { getUserLoans, type GetUserLoansDeps, type GetUserLoansPayload } from "./get-user-loans.js";
+export { getUserLoansWithBooks, type GetUserLoansWithBooksDeps, type GetUserLoansWithBooksPayload } from "./get-user-loans-with-books.js";
+export { renewLoan, type RenewLoanDeps, type RenewLoanPayload } from "./renew-loan.js";
+export { requestLoan, type RequestLoanDeps, type RequestLoanPayload } from "./request-loan.js";
+export { approveLoanRequest, type ApproveLoanRequestDeps, type ApproveLoanRequestPayload } from "./approve-loan-request.js";
+export { rejectLoanRequest, type RejectLoanRequestDeps, type RejectLoanRequestPayload } from "./reject-loan-request.js";
+export { getLoanRequestByToken, type GetLoanRequestByTokenDeps, type GetLoanRequestByTokenPayload } from "./get-loan-request-by-token.js";

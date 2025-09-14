@@ -7,6 +7,7 @@ import { AuthPage } from "./pages/auth.js";
 import { BooksPage } from "./pages/books.js";
 import { LoansPage } from "./pages/loans.js";
 import { AdminBooksPage } from "./pages/admin-books.js";
+import LibrarianLoanManagement from "./pages/librarian-loan-management.js";
 import { ToastContainer } from 'react-toastify';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -75,6 +76,10 @@ export function App() {
                   <AdminBooksPage />
                 </ProtectedRoute>
               } 
+            />
+            <Route 
+              path="/librarian/loan-request/:token" 
+              element={<LibrarianLoanManagement />} 
             />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

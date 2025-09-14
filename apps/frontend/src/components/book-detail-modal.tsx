@@ -8,8 +8,10 @@ interface BookDetailModalProps {
   onClose: () => void;
   onBorrow?: (() => void | Promise<void>) | undefined;
   onReturn?: (() => void | Promise<void>) | undefined;
+  onRequestLoan?: (() => void | Promise<void>) | undefined;
   canBorrow?: boolean;
   canReturn?: boolean;
+  canRequestLoan?: boolean;
 }
 
 export const BookDetailModal = ({ 
@@ -18,8 +20,10 @@ export const BookDetailModal = ({
   onClose, 
   onBorrow, 
   onReturn, 
+  onRequestLoan,
   canBorrow = false, 
-  canReturn = false 
+  canReturn = false,
+  canRequestLoan = false
 }: BookDetailModalProps) => {
   if (!book) return null;
 
@@ -141,6 +145,18 @@ export const BookDetailModal = ({
               className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg hover:from-primary-600 hover:to-primary-700 shadow-md hover:shadow-lg transition-all duration-200"
             >
               Pedir Prestado
+            </button>
+          )}
+
+          {canRequestLoan && onRequestLoan && (
+            <button
+              onClick={() => {
+                onRequestLoan();
+                onClose();
+              }}
+              className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg hover:from-orange-600 hover:to-orange-700 shadow-md hover:shadow-lg transition-all duration-200"
+            >
+              Solicitar Préstamo
             </button>
           )}
         </div>

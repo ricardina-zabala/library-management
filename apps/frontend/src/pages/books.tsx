@@ -10,7 +10,7 @@ import type { Book } from 'app-domain';
 import { toast } from 'react-toastify';
 
 export const BooksPage = () => {
-  const { books, loading, error, searchBooks, getBook } = useBooks();
+  const { books, loading, error, searchBooks, getBook, requestLoan } = useBooks();
   const { borrowBook, returnBookByBookId } = useLoans();
   const { user } = useAuth();
   const [categories, setCategories] = useState<string[]>([]);
@@ -82,6 +82,26 @@ export const BooksPage = () => {
     }
   };
 
+  const handleRequestLoan = async (bookId: string) => {
+    if (!user) {
+      toast.warning('Por favor inicia sesión para solicitar préstamos');
+      return;
+    }
+
+    try {
+      const response = await requestLoan({ userId: user.id, bookId });
+      if (response.success) {
+        toast.success('¡Solicitud de préstamo enviada exitosamente! El bibliotecario revisará tu solicitud.');
+        // Refresh books to get updated status
+        searchBooks();
+      } else {
+        toast.error(response.error || 'No se pudo enviar la solicitud de préstamo');
+      }
+    } catch (error) {
+      toast.error('Error inesperado al solicitar el préstamo');
+    }
+  };
+
   const handleReturnBook = async (bookId: string) => {
     if (!user) {
       toast.warning('Por favor inicia sesión para devolver libros');  
@@ -141,6 +161,7 @@ export const BooksPage = () => {
           onBorrow={handleBorrowBook}
           onReturn={handleReturnBook}
           onDetails={handleBookDetails}
+          onRequestLoan={handleRequestLoan}
           emptyMessage="No se encontraron libros. Intenta ajustar tus criterios de búsqueda."
         />
 
@@ -150,8 +171,10 @@ export const BooksPage = () => {
           onClose={closeDetailModal}
           onBorrow={selectedBook && selectedBook.status === BookStatus.AVAILABLE && selectedBook.availableCopies > 0 ? () => handleBorrowBook(selectedBook.id) : undefined}
           onReturn={selectedBook && selectedBook.status === BookStatus.BORROWED ? () => handleReturnBook(selectedBook.id) : undefined}
+          onRequestLoan={selectedBook && selectedBook.status !== BookStatus.MAINTENANCE && !(selectedBook.status === BookStatus.AVAILABLE && selectedBook.availableCopies > 0) ? () => handleRequestLoan(selectedBook.id) : undefined}
           canBorrow={selectedBook ? selectedBook.status === BookStatus.AVAILABLE && selectedBook.availableCopies > 0 : false}
           canReturn={selectedBook ? selectedBook.status === BookStatus.BORROWED : false}
+          canRequestLoan={selectedBook ? selectedBook.status !== BookStatus.MAINTENANCE && !(selectedBook.status === BookStatus.AVAILABLE && selectedBook.availableCopies > 0) : false}
         />
       </div>
     </div>

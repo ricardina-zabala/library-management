@@ -6,9 +6,10 @@ export interface BookCardProps {
   onBorrow?: () => void;
   onReturn?: () => void;
   onDetails?: () => void;
+  onRequestLoan?: () => void;
 }
 
-export const BookCard = ({ book, onBorrow, onReturn, onDetails }: BookCardProps) => {
+export const BookCard = ({ book, onBorrow, onReturn, onDetails, onRequestLoan }: BookCardProps) => {
   const getStatusStyles = (status: BookStatus) => {
     switch (status) {
       case BookStatus.AVAILABLE:
@@ -42,6 +43,7 @@ export const BookCard = ({ book, onBorrow, onReturn, onDetails }: BookCardProps)
   const statusStyles = getStatusStyles(book.status);
   const canBorrow = book.status === BookStatus.AVAILABLE && book.availableCopies > 0;
   const canReturn = book.status === BookStatus.BORROWED;
+  const canRequestLoan = book.status !== BookStatus.MAINTENANCE;
 
   return (
     <div className={`bg-white border border-gray-100 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 max-w-60 ${statusStyles.border} border-l-4`}>
@@ -83,6 +85,15 @@ export const BookCard = ({ book, onBorrow, onReturn, onDetails }: BookCardProps)
             onClick={onBorrow}
           >
             Pedir prestado
+          </button>
+        )}
+        
+        {!canBorrow && canRequestLoan && onRequestLoan && (
+          <button 
+            className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg hover:from-orange-600 hover:to-orange-700 shadow-md hover:shadow-lg transition-all duration-200"
+            onClick={onRequestLoan}
+          >
+            Solicitar préstamo
           </button>
         )}
         

@@ -36,6 +36,11 @@ interface DeleteBookPayload {
   userRole: UserRole;
 }
 
+interface RequestLoanPayload {
+  userId: string;
+  bookId: string;
+}
+
 export const useBooks = () => {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(false);
@@ -193,6 +198,31 @@ export const useBooks = () => {
     }
   }, []);
 
+  const requestLoan = useCallback(async (payload: RequestLoanPayload): Promise<ApiResponse<any>> => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // TODO: Change to 'requestLoan' when types are updated
+      const response = await api('borrowBook', payload as unknown as Record<string, unknown>);
+      
+      if (!response.success) {
+        setError(response.error || 'Failed to request loan');
+      }
+      
+      return response;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to request loan';
+      setError(errorMessage);
+      return {
+        success: false,
+        error: errorMessage,
+      };
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const clearError = useCallback(() => {
     setError(null);
   }, []);
@@ -206,6 +236,7 @@ export const useBooks = () => {
     createBook,
     updateBook,
     deleteBook,
+    requestLoan,
     clearError,
   };
 };

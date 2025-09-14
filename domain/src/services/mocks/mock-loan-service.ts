@@ -1,4 +1,4 @@
-import type { LoanService, CreateLoanData, LoanSearchCriteria } from "../loan-service.js";
+import type { LoanService, CreateLoanData, LoanSearchCriteria, LoanWithBook } from "../loan-service.js";
 import type { Loan, LoanStatus } from "../../entities/loan.js";
 
 export class MockLoanService implements LoanService {
@@ -146,6 +146,21 @@ export class MockLoanService implements LoanService {
     return this.loans.filter(loan => 
       loan.userId === userId && loan.status === 'active'
     );
+  }
+
+  async getUserLoansWithBookInfo(userId: string): Promise<LoanWithBook[]> {
+    const userLoans = this.loans.filter(loan => loan.userId === userId);
+    
+    return userLoans.map(loan => ({
+      ...loan,
+      book: {
+        id: loan.bookId,
+        title: `Mock Book Title ${loan.bookId}`,
+        author: `Mock Author ${loan.bookId}`,
+        isbn: `978-0-${loan.bookId.slice(0, 3)}-${loan.bookId.slice(3, 6)}-0`,
+        category: 'Fiction'
+      }
+    }));
   }
 
   addLoan(loan: Loan): void {

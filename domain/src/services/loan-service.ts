@@ -13,6 +13,16 @@ export interface LoanSearchCriteria {
   overdue?: boolean;
 }
 
+export interface LoanWithBook extends Loan {
+  book: {
+    id: string;
+    title: string;
+    author: string;
+    isbn: string;
+    category: string;
+  };
+}
+
 export interface LoanService {
   findById: (id: string) => Promise<Loan | undefined>;
   findAll: () => Promise<Loan[]>;
@@ -28,4 +38,5 @@ export interface LoanService {
   delete: (id: string) => Promise<boolean>;
   getActiveLoanForBook: (bookId: string) => Promise<Loan | undefined>;
   getUserActiveLoans: (userId: string) => Promise<Loan[]>;
+  getUserLoansWithBookInfo: (userId: string) => Promise<LoanWithBook[]>;
 }

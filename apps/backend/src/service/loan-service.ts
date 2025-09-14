@@ -256,6 +256,42 @@ export class DatabaseLoanService implements LoanService {
     return this.mapRowsToLoans(rows);
   }
 
+  async getUserLoansWithBookInfo(userId: string): Promise<any[]> {
+    const stmt = this.db.prepare(`
+      SELECT 
+        l.*,
+        b.title as bookTitle,
+        b.author as bookAuthor,
+        b.isbn as bookIsbn,
+        b.category as bookCategory
+      FROM loans l
+      JOIN books b ON l.bookId = b.id
+      WHERE l.userId = ?
+      ORDER BY l.loanDate DESC
+    `);
+    const rows = stmt.all(userId) as any[];
+    
+    return rows.map(row => ({
+      id: row.id,
+      userId: row.userId,
+      bookId: row.bookId,
+      loanDate: new Date(row.loanDate),
+      dueDate: new Date(row.dueDate),
+      returnDate: row.returnDate ? new Date(row.returnDate) : undefined,
+      status: row.status as LoanStatus,
+      renewalCount: row.renewalCount,
+      createdAt: new Date(row.createdAt),
+      updatedAt: new Date(row.updatedAt),
+      book: {
+        id: row.bookId,
+        title: row.bookTitle,
+        author: row.bookAuthor,
+        isbn: row.bookIsbn,
+        category: row.bookCategory
+      }
+    }));
+  }
+
   private mapRowToLoan(row: any): Loan {
     const loan: Loan = {
       id: row.id,

@@ -6,6 +6,8 @@ import { domainUseCases, type UseCaseName } from "app-domain";
 import { DatabaseUserService } from "./service/user-service.js";
 import { DatabaseBookService } from "./service/book-service.js";
 import { DatabaseLoanService } from "./service/loan-service.js";
+import { DatabaseLoanRequestService } from "./service/loan-request-service.js";
+import { EtherealEmailService } from "./service/email-service.js";
 
 function createDb() {
   const db = sqlite(process.env.DATABASE_PATH || "data/data.db");
@@ -57,6 +59,25 @@ function createDb() {
     )
   `).run();
 
+  db.prepare(`
+    CREATE TABLE IF NOT EXISTS loan_requests (
+      id TEXT PRIMARY KEY,
+      userId TEXT NOT NULL,
+      bookId TEXT NOT NULL,
+      status TEXT NOT NULL,
+      requestDate TEXT NOT NULL,
+      reviewDate TEXT,
+      reviewedBy TEXT,
+      dueDate TEXT,
+      rejectionReason TEXT,
+      token TEXT UNIQUE NOT NULL,
+      createdAt TEXT NOT NULL,
+      updatedAt TEXT NOT NULL,
+      FOREIGN KEY (userId) REFERENCES users (id),
+      FOREIGN KEY (bookId) REFERENCES books (id)
+    )
+  `).run();
+
   return db;
 }
 
@@ -65,6 +86,8 @@ const db = createDb();
 const userService = new DatabaseUserService(db);
 const bookService = new DatabaseBookService(db);
 const loanService = new DatabaseLoanService(db);
+const loanRequestService = new DatabaseLoanRequestService(db);
+const emailService = new EtherealEmailService();
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -82,6 +105,8 @@ const dependencies = {
   userService: userService,
   bookService: bookService,
   loanService: loanService,
+  loanRequestService: loanRequestService,
+  emailService: emailService,
 };
 
 app.get('/health', (req: Request, res: Response) => {
