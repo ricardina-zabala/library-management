@@ -14,7 +14,7 @@ export const SearchFilters = ({
   onFilterByStatus,
   onFilterByCategory,
   categories = [],
-  placeholder = "Search books by title, author, or ISBN..."
+  placeholder = "Buscar libros por título, autor o ISBN..."
 }: SearchFiltersProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<BookStatus | 'all'>('all');
@@ -52,7 +52,7 @@ export const SearchFilters = ({
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
         <div className="md:col-span-2">
           <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">
-            Search
+            Buscar
           </label>
           <input
             id="search"
@@ -66,7 +66,7 @@ export const SearchFilters = ({
 
         <div>
           <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
-            Status
+            Estado
           </label>
           <select
             id="status"
@@ -74,11 +74,11 @@ export const SearchFilters = ({
             onChange={handleStatusChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
           >
-            <option value="all">All Status</option>
-            <option value={BookStatus.AVAILABLE}>Available</option>
-            <option value={BookStatus.BORROWED}>Borrowed</option>
-            <option value={BookStatus.RESERVED}>Reserved</option>
-            <option value={BookStatus.MAINTENANCE}>Maintenance</option>
+            <option value="all">Todos los estados</option>
+            <option value={BookStatus.AVAILABLE}>Disponible</option>
+            <option value={BookStatus.BORROWED}>Prestado</option>
+            <option value={BookStatus.RESERVED}>Reservado</option>
+            <option value={BookStatus.MAINTENANCE}>Mantenimiento</option>
           </select>
         </div>
 
@@ -92,7 +92,7 @@ export const SearchFilters = ({
             onChange={handleCategoryChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
           >
-            <option value="all">All Categories</option>
+            <option value="all">Todas las categorías</option>
             {categories.map((category) => (
               <option key={category} value={category}>
                 {category}
@@ -108,7 +108,7 @@ export const SearchFilters = ({
             onClick={clearFilters}
             className="px-4 py-2 text-sm font-medium text-primary-600 bg-primary-100 rounded-lg hover:bg-primary-200 border border-primary-200 hover:border-primary-300 transition-all duration-200 shadow-sm hover:shadow-md"
           >
-            Clear Filters
+            Limpiar filtros
           </button>
         </div>
       )}

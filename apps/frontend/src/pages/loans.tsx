@@ -64,18 +64,18 @@ export const LoansPage = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">My Loans</h1>
-          <p className="text-gray-600">Manage your borrowed books</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Mis préstamos</h1>
+          <p className="text-gray-600">Gestiona tus libros prestados</p>
         </div>
 
         {Array.isArray(loans) && loans.length === 0 ? (
           <div className="bg-white rounded-lg shadow p-6 text-center">
-            <p className="text-gray-500 text-lg">You haven't borrowed any books yet.</p>
+            <p className="text-gray-500 text-lg">Aún no has tomado prestado ningún libro.</p>
             <a
               href="/books"
               className="mt-4 inline-block bg-primary-600 text-white px-6 py-2 rounded hover:bg-primary-700"
             >
-              Browse Books
+              Explorar libros
             </a>
           </div>
         ) : Array.isArray(loans) && loans.length > 0 ? (
@@ -87,7 +87,7 @@ export const LoansPage = () => {
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
                         <h3 className="text-lg font-medium text-gray-900">
-                          Book ID: {loan.bookId}
+                          ID del libro: {loan.bookId}
                         </h3>
                         <div className="flex items-center space-x-2">
                           <span
@@ -103,19 +103,19 @@ export const LoansPage = () => {
                           </span>
                           {loan.status === LoanStatus.OVERDUE && (
                             <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">
-                              Overdue
+                              Atrasado
                             </span>
                           )}
                         </div>
                       </div>
                       
                       <div className="mt-2 flex items-center text-sm text-gray-500 space-x-4">
-                        <span>Borrowed: {formatDate(loan.loanDate)}</span>
-                        <span>Due: {formatDate(loan.dueDate)}</span>
+                        <span>Prestado: {formatDate(loan.loanDate)}</span>
+                        <span>Pendiente: {formatDate(loan.dueDate)}</span>
                         {loan.returnDate && (
                           <span>Returned: {formatDate(loan.returnDate)}</span>
                         )}
-                        <span>Renewals: {loan.renewalCount}</span>
+                        <span>Renovaciones: {loan.renewalCount}</span>
                       </div>
                     </div>
 
@@ -125,7 +125,7 @@ export const LoansPage = () => {
                           onClick={() => handleReturnBook(loan.id)}
                           className="bg-green-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-green-700"
                         >
-                          Return Book
+                          Libro de devolución
                         </button>
                       </div>
                     )}
@@ -136,12 +136,12 @@ export const LoansPage = () => {
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow p-6 text-center">
-            <p className="text-gray-500 text-lg">Unable to load loans data.</p>
+            <p className="text-gray-500 text-lg">No se pueden cargar los datos de los préstamos.</p>
             <button
               onClick={() => user && getUserLoans(user.id)}
               className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             >
-              Retry
+              Cargar de nuevo
             </button>
           </div>
         )}

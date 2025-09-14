@@ -10,10 +10,10 @@ export interface BookListProps {
   emptyMessage?: string;
 }
 
-export const BookList = ({ 
-  books, 
-  onBorrow, 
-  onReturn, 
+export const BookList = ({
+  books,
+  onBorrow,
+  onReturn,
   onDetails,
   loading = false,
   emptyMessage = "No books found"
@@ -37,15 +37,15 @@ export const BookList = ({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
-      {booksArray.map((book) => {
-        const cardProps: any = { book };
-        if (onBorrow) cardProps.onBorrow = () => onBorrow(book.id);
-        if (onReturn) cardProps.onReturn = () => onReturn(book.id);
-        if (onDetails) cardProps.onDetails = () => onDetails(book.id);
-        
-        return <BookCard key={book.id} {...cardProps} />;
-      })}
-    </div>
+      <div className="flex flex-wrap justify-center gap-4 p-4">
+        {booksArray.map((book) => {
+          const cardProps: any = { book };
+          if (onBorrow) cardProps.onBorrow = () => onBorrow(book.id);
+          if (onReturn) cardProps.onReturn = () => onReturn(book.id);
+          if (onDetails) cardProps.onDetails = () => onDetails(book.id);
+
+          return <BookCard key={book.id} {...cardProps} />;
+        })}
+      </div>
   );
 };

@@ -44,7 +44,7 @@ export const BookCard = ({ book, onBorrow, onReturn, onDetails }: BookCardProps)
   const canReturn = book.status === BookStatus.BORROWED;
 
   return (
-    <div className={`bg-white border border-gray-100 rounded-xl p-6 m-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 max-w-sm min-w-[280px] ${statusStyles.border} border-l-4`}>
+    <div className={`bg-white border border-gray-100 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 max-w-60 ${statusStyles.border} border-l-4`}>
       <div className="flex justify-between items-start mb-3 gap-3">
         <h3 className="text-lg font-semibold text-gray-800 line-clamp-2 flex-1" title={book.title}>
           {book.title}
@@ -62,7 +62,7 @@ export const BookCard = ({ book, onBorrow, onReturn, onDetails }: BookCardProps)
         
         <div className="pt-2 mt-3 border-t border-gray-100">
           <span className="text-sm text-gray-600 font-medium">
-            {book.availableCopies} of {book.totalCopies} available
+            {book.availableCopies} de {book.totalCopies} disponibles
           </span>
         </div>
       </div>
