@@ -31,16 +31,23 @@ export const useBooks = () => {
     try {
       const response = await api<Book[]>('searchBooks', payload as unknown as Record<string, unknown>);
       
+      console.log('searchBooks response:', response);
+      
       if (response.success && response.data) {
-        setBooks(response.data);
+        const booksData = Array.isArray(response.data) ? response.data : [];
+        setBooks(booksData);
       } else {
+        console.error('Search books failed:', response.error);
         setError(response.error || 'Failed to search books');
+        setBooks([]);
       }
       
       return response;
     } catch (error) {
+      console.error('Search books error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to search books';
       setError(errorMessage);
+      setBooks([]);
       return {
         success: false,
         error: errorMessage,

@@ -3,44 +3,42 @@ version: '3.8'
 services:
   backend-dev:
     build:
-      context: ./apps/backend
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: ./apps/backend/Dockerfile.dev
     container_name: library-backend-dev
     restart: unless-stopped
     environment:
       - NODE_ENV=development
       - PORT=3000
-      - DATABASE_PATH=/app/data/data.db
+      - DATABASE_PATH=/workspace/apps/backend/data/data.db
       - JWT_SECRET=${JWT_SECRET:-dev-secret-key-change-in-production}
       - CORS_ORIGIN=http://localhost:5173
     volumes:
-      - ./apps/backend:/app
-      - ./domain:/app/domain
-      - backend_dev_data:/app/data
-      - /app/node_modules
+      - .:/workspace
+      - backend_dev_data:/workspace/apps/backend/data
+      - /workspace/node_modules
     ports:
       - "3000:3000"
     networks:
       - library-dev-network
-    command: npm run dev
+    command: sh -c "cd /workspace/apps/backend && yarn dev"
 
   frontend-dev:
     build:
-      context: ./apps/frontend
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: ./apps/frontend/Dockerfile.dev
     container_name: library-frontend-dev
     restart: unless-stopped
     environment:
       - VITE_API_URL=http://localhost:3000
     volumes:
-      - ./apps/frontend:/app
-      - ./domain:/app/domain
-      - /app/node_modules
+      - .:/workspace
+      - /workspace/node_modules
     ports:
       - "5173:5173"
     networks:
       - library-dev-network
-    command: npm run dev
+    command: sh -c "cd /workspace/apps/frontend && yarn dev --host 0.0.0.0"
     depends_on:
       - backend-dev
 

@@ -26,7 +26,9 @@ export const BookList = ({
     );
   }
 
-  if (books.length === 0) {
+  const booksArray = Array.isArray(books) ? books : [];
+
+  if (booksArray.length === 0) {
     return (
       <div className="text-center p-8 text-gray-500">
         <p className="text-lg">{emptyMessage}</p>
@@ -36,7 +38,7 @@ export const BookList = ({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
-      {books.map((book) => {
+      {booksArray.map((book) => {
         const cardProps: any = { book };
         if (onBorrow) cardProps.onBorrow = () => onBorrow(book.id);
         if (onReturn) cardProps.onReturn = () => onReturn(book.id);

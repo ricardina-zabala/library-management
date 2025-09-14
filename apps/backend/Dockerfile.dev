@@ -1,18 +1,20 @@
-FROM node:18-alpine
+FROM node:20-alpine
 
-WORKDIR /app
+WORKDIR /workspace
 
 # Install dependencies for development
 RUN apk add --no-cache git
 
-# Copy package files
+# Copy workspace configuration
 COPY package*.json ./
+COPY domain ./domain/
+COPY apps/backend ./apps/backend/
 
-# Install all dependencies (including dev dependencies)
-RUN npm install
+# Install all dependencies from root (handles workspaces)
+RUN yarn install
 
-# Copy source code
-COPY . .
+# Set working directory to backend
+WORKDIR /workspace/apps/backend
 
 # Expose port
 EXPOSE 3000
